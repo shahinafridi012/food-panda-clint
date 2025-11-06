@@ -1,102 +1,95 @@
-// app/login.jsx
-"use client"
-
-import React, { useState } from "react"
+import { useContext } from "react";
+import { AuthContext } from "../../providers/AuthProviders.jsx";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const { signIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Login er por redirect korar jonno
+  const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
+    e.preventDefault();
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
 
-   
-  }
+    console.log("Email:", email, "Password:", password);
+
+    signIn(email, password)
+      .then((result) => {
+        const loggedUser = result.user;
+        console.log(" Logged User:", loggedUser);
+
+        // Server e JWT request pathano
+        const userInfo = { email: loggedUser.email };
+
+        fetch("http://localhost:5000/jwt", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(" JWT token:", data.token);
+            // Token localStorage e save
+            localStorage.setItem("access-token", data.token);
+            navigate(from, { replace: true });
+          });
+      })
+      .catch((error) => {
+        console.error(" SignIn Error:", error.message);
+      });
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-500 mt-1">Sign in to your account to continue</p>
-        </div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">Login</h1>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-gray-700 mb-1">Email address</label>
+            <label htmlFor="email" className="block mb-1 text-gray-700">
+              Email
+            </label>
             <input
-              id="email"
               type="email"
+              name="email"
+              id="email"
               placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
             />
           </div>
 
-          {/* Password */}
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <label htmlFor="password" className="text-gray-700">Password</label>
-              <a href="#" className="text-sm text-blue-500 hover:underline">Forgot password?</a>
-            </div>
+            <label htmlFor="password" className="block mb-1 text-gray-700">
+              Password
+            </label>
             <input
-              id="password"
               type="password"
+              name="password"
+              id="password"
               placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
             />
           </div>
 
-          {/* Error message */}
-          {error && (
-            <div className="p-3 text-red-700 bg-red-100 border border-red-200 rounded-md text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* Submit button */}
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
+            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
           >
-            {isLoading ? "Signing in..." : "Sign in"}
+            Sign In
           </button>
         </form>
-
-        {/* Divider */}
-        <div className="flex items-center my-6">
-          <hr className=" border-gray-300" />
-          <span className="mx-2 text-gray-400 text-sm">or continue with</span>
-          <hr className=" border-gray-300" />
-        </div>
-
-        {/* Social buttons */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <button className="py-2 px-4 border rounded-lg hover:bg-gray-100">Google</button>
-          <button className="py-2 px-4 border rounded-lg hover:bg-gray-100">GitHub</button>
-        </div>
-
-        {/* Sign up link */}
-        <p className="text-center text-gray-500 text-sm">
-          Don't have an account?{" "}
-          <a href="#" className="text-blue-500 font-medium hover:underline">Sign up</a>
-        </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

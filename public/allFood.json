@@ -1,6 +1,6 @@
 [
   {
-    "_id": "1",
+    
     "name": "Spicy Chicken Burger",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Fast Food",
@@ -12,7 +12,7 @@
     "purchaseCount": 32
   },
   {
-    "_id": "2",
+    
     "name": "Italian Pasta",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Main Course",
@@ -24,7 +24,7 @@
     "purchaseCount": 27
   },
   {
-    "_id": "3",
+    
     "name": "Beef Steak",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Main Dish",
@@ -36,7 +36,7 @@
     "purchaseCount": 19
   },
   {
-    "_id": "4",
+    
     "name": "Vegetable Pizza",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Fast Food",
@@ -48,7 +48,7 @@
     "purchaseCount": 44
   },
   {
-    "_id": "5",
+    
     "name": "Thai Fried Rice",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Asian Cuisine",
@@ -60,7 +60,7 @@
     "purchaseCount": 29
   },
   {
-    "_id": "6",
+    
     "name": "Chocolate Lava Cake",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Dessert",
@@ -72,7 +72,7 @@
     "purchaseCount": 53
   },
   {
-    "_id": "7",
+    
     "name": "Grilled Salmon",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Seafood",
@@ -84,7 +84,7 @@
     "purchaseCount": 17
   },
   {
-    "_id": "8",
+    
     "name": "Paneer Butter Masala",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Indian Cuisine",
@@ -96,7 +96,7 @@
     "purchaseCount": 21
   },
   {
-    "_id": "9",
+    
     "name": "Tandoori Chicken",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Grill",
@@ -108,7 +108,7 @@
     "purchaseCount": 36
   },
   {
-    "_id": "10",
+    
     "name": "Sushi Platter",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Japanese Cuisine",
@@ -120,7 +120,7 @@
     "purchaseCount": 23
   },
   {
-    "_id": "11",
+    
     "name": "Fried Chicken Wings",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Fast Food",
@@ -132,7 +132,7 @@
     "purchaseCount": 42
   },
   {
-    "_id": "12",
+    
     "name": "Mutton Biryani",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Traditional",
@@ -144,7 +144,7 @@
     "purchaseCount": 47
   },
   {
-    "_id": "13",
+    
     "name": "Veg Salad Bowl",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Healthy",
@@ -156,7 +156,7 @@
     "purchaseCount": 14
   },
   {
-    "_id": "14",
+    
     "name": "Chicken Shawarma",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Middle Eastern",
@@ -168,7 +168,7 @@
     "purchaseCount": 31
   },
   {
-    "_id": "15",
+    
     "name": "Fish Curry",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Traditional",
@@ -180,7 +180,7 @@
     "purchaseCount": 25
   },
   {
-    "_id": "16",
+    
     "name": "Beef Noodles",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Asian Cuisine",
@@ -192,7 +192,7 @@
     "purchaseCount": 40
   },
   {
-    "_id": "17",
+    
     "name": "Cheese Sandwich",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Snack",
@@ -204,7 +204,7 @@
     "purchaseCount": 11
   },
   {
-    "_id": "18",
+    
     "name": "Mango Smoothie",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Beverage",
@@ -216,7 +216,7 @@
     "purchaseCount": 34
   },
   {
-    "_id": "19",
+    
     "name": "French Fries",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Fast Food",
@@ -228,7 +228,7 @@
     "purchaseCount": 50
   },
   {
-    "_id": "20",
+    
     "name": "Ice Cream Sundae",
     "image": "https://i.postimg.cc/fynwD3GW/samuel-yongbo-kwon-sx7itbvf-OUI-unsplash.jpg",
     "category": "Dessert",

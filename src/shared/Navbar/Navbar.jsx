@@ -1,12 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../providers/AuthProviders";
 
-export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
+export default function Navbar({ onSearch }) {
+  const { user, logOut } = useContext(AuthContext);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const profileRef = useRef(null);
+  const navigate = useNavigate();
 
+  // ✅ Click outside to close profile dropdown
   useEffect(() => {
     function handleClickOutside(e) {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
@@ -17,11 +21,23 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // ✅ Search handler
   function handleSearch(e) {
     e.preventDefault();
     if (onSearch) onSearch(searchText.trim());
   }
 
+  // ✅ Logout handler
+  const handleLogout = () => {
+    logOut()
+      .then(() => {
+        localStorage.removeItem("access-token"); // remove JWT token
+        navigate("/login");
+      })
+      .catch((error) => console.error("Logout Error:", error));
+  };
+
+  // ✅ Active link style
   const activeClass = ({ isActive }) =>
     isActive
       ? "text-black font-semibold border-b-2 border-black"
@@ -31,7 +47,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
     <header className="bg-white shadow-md rounded-b-2xl sticky top-0 z-50 border-b border-gray-100 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
+          {/* 🔹 Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div>
               <h1 className="text-xl font-semibold text-black group-hover:opacity-80 transition">
@@ -41,7 +57,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
             </div>
           </Link>
 
-          {/* Desktop nav links */}
+          {/* 🔹 Desktop nav links */}
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink to="/" className={activeClass} end>
               Home
@@ -52,12 +68,12 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
             <NavLink to="/gallery" className={activeClass}>
               Gallery
             </NavLink>
-            <NavLink to="/profile/my-orders" className={activeClass}>
+            <NavLink to="/my-profile" className={activeClass}>
               My Profile
             </NavLink>
           </nav>
 
-          {/* Right section */}
+          {/* 🔹 Right section */}
           <div className="flex items-center gap-4">
             {/* Search */}
             <form
@@ -92,7 +108,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
               </button>
             </form>
 
-            {/* Profile / Auth */}
+            {/* 🔹 Profile / Auth */}
             {user ? (
               <div className="relative" ref={profileRef}>
                 <button
@@ -130,6 +146,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
                   </svg>
                 </button>
 
+                {/* 🔹 Profile dropdown */}
                 {profileOpen && (
                   <div className="absolute right-0 mt-3 w-56 bg-white border border-gray-200 rounded-xl shadow-xl py-2 animate-fade-in">
                     <div className="px-4 py-2 text-sm text-gray-600">
@@ -139,18 +156,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
                       </strong>
                     </div>
                     <div className="border-t border-gray-100 my-2" />
-                    <Link
-                      to="/profile/my-added"
-                      className="block px-4 py-2 text-sm hover:bg-gray-50 transition"
-                    >
-                      My Added Foods
-                    </Link>
-                    <Link
-                      to="/profile/add-food"
-                      className="block px-4 py-2 text-sm hover:bg-gray-50 transition"
-                    >
-                      Add Food
-                    </Link>
+                 
                     <Link
                       to="/profile/my-orders"
                       className="block px-4 py-2 text-sm hover:bg-gray-50 transition"
@@ -158,7 +164,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
                       My Orders
                     </Link>
                     <button
-                      onClick={onLogout}
+                      onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
                     >
                       Logout
@@ -175,7 +181,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
                   Login
                 </Link>
                 <Link
-                  to="/register"
+                  to="/signup"
                   className="hidden sm:inline-block px-4 py-1.5 rounded-full bg-black text-white text-sm font-medium shadow-sm hover:opacity-90 transition"
                 >
                   Sign Up
@@ -225,7 +231,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* 🔹 Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white rounded-b-2xl shadow-md animate-fade-in">
           <div className="px-4 py-3 space-y-2">
@@ -246,6 +252,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
               </NavLink>
             ))}
 
+            {/* Mobile search */}
             <form
               onSubmit={handleSearch}
               className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-3 py-1 mt-3"
@@ -278,6 +285,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
               </button>
             </form>
 
+            {/* Mobile auth */}
             <div className="pt-3">
               {user ? (
                 <div className="flex items-center justify-between">
@@ -299,7 +307,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
                     </div>
                   </div>
                   <button
-                    onClick={onLogout}
+                    onClick={handleLogout}
                     className="text-red-600 text-sm font-medium hover:text-red-700"
                   >
                     Logout
@@ -314,7 +322,7 @@ export default function Navbar({ user = null, onLogout = () => {}, onSearch }) {
                     Login
                   </Link>
                   <Link
-                    to="/register"
+                    to="/signup"
                     className="flex-1 text-center px-4 py-2 rounded-md bg-black text-white hover:opacity-90 transition"
                   >
                     Sign Up

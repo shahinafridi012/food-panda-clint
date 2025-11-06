@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import img1 from "../../../assets/banner/img1.jpg";
 import img2 from "../../../assets/banner/img2.jpg";
 import img3 from "../../../assets/banner/img3.jpg";
@@ -8,13 +8,25 @@ const slides = [img1, img2, img3, img4];
 
 const Banner = () => {
   const [current, setCurrent] = useState(0);
+  const intervalRef = useRef(null); // auto-scroll reference
+  const [isHovered, setIsHovered] = useState(false);
 
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const prevSlide = () =>
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+
+  // Auto scroll every 2 seconds, pause on hover
+  useEffect(() => {
+    if (!isHovered) {
+      intervalRef.current = setInterval(nextSlide, 1000);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [isHovered]);
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden rounded-xl">
+    <div
+      className="relative w-full h-[600px] overflow-hidden rounded-2xl shadow-lg"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Image Slider */}
       <div
         className="flex transition-transform duration-700 ease-in-out"
@@ -27,41 +39,29 @@ const Banner = () => {
               alt={`Slide ${index + 1}`}
               className="w-full h-[600px] object-cover"
             />
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-linear-to-r from-black/80 to-transparent flex items-center">
-              <div className="text-white pl-10 w-1/2 space-y-6">
-                <h2 className="text-5xl font-bold leading-tight">
+
+            {/* Overlay Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex items-center">
+              {/* Text Content */}
+              <div
+                className={`text-white pl-10 w-full md:w-1/2 space-y-6 transition-all duration-700 ${
+                  current === index
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 -translate-x-10"
+                }`}
+              >
+                <h2 className="text-4xl md:text-6xl font-bold leading-tight drop-shadow-lg">
                   Affordable Price For Car Servicing
                 </h2>
-                <p className="text-lg text-gray-200">
-                  There are many variations of passages available, but the
-                  majority have suffered alteration in some form.
+                <p className="text-lg md:text-xl text-gray-200">
+                  Get the best quality car service at an unbeatable price. Your
+                  satisfaction is our priority.
                 </p>
-                <div className="flex gap-4">
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition">
-                    Discover More
-                  </button>
-                  
-                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute top-1/2 left-5 -translate-y-1/2 bg-white/70 hover:bg-white text-black p-3 rounded-full shadow-md transition"
-      >
-        ❮
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute top-1/2 right-5 -translate-y-1/2 bg-white/70 hover:bg-white text-black p-3 rounded-full shadow-md transition"
-      >
-        ❯
-      </button>
 
       {/* Dots Indicator */}
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-3">
@@ -69,8 +69,8 @@ const Banner = () => {
           <button
             key={index}
             onClick={() => setCurrent(index)}
-            className={`w-3 h-3 rounded-full transition ${
-              current === index ? "bg-white" : "bg-gray-400"
+            className={`w-3 h-3 rounded-full transition-all cursor-pointer ${
+              current === index ? "bg-white scale-125" : "bg-gray-400"
             }`}
           ></button>
         ))}
