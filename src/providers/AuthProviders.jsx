@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect } from "react";
 import {
   getAuth,
@@ -16,49 +15,56 @@ const AuthProviders = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Create New User (Signup)
-  const createUser = (email, password) => {
-    setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
-  };
+  // 🔹 Create User
+  const createUser = (email, password) =>
+    createUserWithEmailAndPassword(auth, email, password);
 
-  // 🔹 Sign In Existing User
-  const signIn = (email, password) => {
-    setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
-  };
+  // 🔹 Sign In
+  const signIn = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password);
 
-  // 🔹 Log Out User + Remove JWT
-  const logOut = () => {
+  // 🔹 Log Out
+  const logOut = async () => {
     localStorage.removeItem("access-token");
+    setUser(null);
     return signOut(auth);
   };
 
-  // 🔹 Track Logged-in User (auto JWT fetch)
+  // 🔹 Track Auth State + Fetch JWT + Role
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Current User:", currentUser);
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setLoading(true);
 
       if (currentUser?.email) {
-        // 🔸 User login hole backend e token request
-        const loggedUser = { email: currentUser.email };
-        fetch("http://localhost:5000/jwt", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(loggedUser),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("Access Token from server:", data.token);
-            localStorage.setItem("access-token", data.token);
-            setLoading(false);
+        try {
+          // 🔸 Request JWT from backend
+          const tokenRes = await fetch("http://localhost:5000/jwt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: currentUser.email }),
           });
+
+          const tokenData = await tokenRes.json();
+          localStorage.setItem("access-token", tokenData.token);
+
+          // 🔸 Fetch user role from backend
+          const roleRes = await fetch(
+            `http://localhost:5000/users/${currentUser.email}`
+          );
+
+          const roleData = await roleRes.json();
+
+          // 🔸 Merge role into user object
+          setUser({ ...currentUser, role: roleData.role || "user" });
+        } catch (error) {
+          console.error("AuthProviders Error:", error);
+          setUser(currentUser); // fallback to normal user
+        } finally {
+          setLoading(false);
+        }
       } else {
-        // 🔸 Logout hole token remove
         localStorage.removeItem("access-token");
+        setUser(null);
         setLoading(false);
       }
     });

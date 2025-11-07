@@ -31,7 +31,7 @@ export default function Navbar({ onSearch }) {
   const handleLogout = () => {
     logOut()
       .then(() => {
-        localStorage.removeItem("access-token"); // remove JWT token
+        localStorage.removeItem("access-token"); 
         navigate("/login");
       })
       .catch((error) => console.error("Logout Error:", error));

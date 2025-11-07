@@ -7,21 +7,29 @@ const OrderNow = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+
   const [food, setFood] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [ifUnavailable, setIfUnavailable] = useState("Remove it from my order");
-  const { name, image } = food || {};
 
   useEffect(() => {
-    fetch(`http://localhost:5000/food/${id}`)
-      .then((res) => res.json())
+    // Server route matches /foods/:id
+    fetch(`http://localhost:5000/foods/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Food not found");
+        return res.json();
+      })
       .then((data) => setFood(data))
-      .catch((err) => console.error("Error fetching food:", err));
+      .catch((err) => {
+        console.error("Error fetching food:", err);
+        toast.error("Failed to fetch food!");
+      });
   }, [id]);
 
   const handleOrder = async (e) => {
     e.preventDefault();
+
     if (!user) {
       toast.error("Please log in to place an order!");
       return;
@@ -45,12 +53,14 @@ const OrderNow = () => {
     try {
       const res = await fetch("http://localhost:5000/orders", {
         method: "POST",
-        headers: { 
-          "content-type": "application/json",
-          authorization: `Bearer ${localStorage.getItem("access-token")}`
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },
         body: JSON.stringify(orderInfo),
       });
+
+      if (!res.ok) throw new Error("Failed to place order");
 
       const data = await res.json();
 
@@ -58,14 +68,14 @@ const OrderNow = () => {
         toast.success("Order placed successfully!");
         setQuantity(1);
         setSpecialInstructions("");
-        // Redirect to MyProfile after success
-        navigate("/my-profile");
+        // Redirect to user dashboard after success
+        navigate("/dashboard/user");
       } else {
         toast.error("Failed to place order!");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong while placing the order!");
     }
   };
 
@@ -73,11 +83,17 @@ const OrderNow = () => {
 
   return (
     <div className="max-w-lg mx-auto mt-10 bg-white rounded-xl shadow-lg overflow-hidden">
-      <img className="rounded-t-lg w-full h-64 object-cover" src={image} alt={name} />
+      <img
+        className="rounded-t-lg w-full h-64 object-cover"
+        src={food.image}
+        alt={food.name}
+      />
 
       <div className="p-6 space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">{food.name}</h2>
-        <p className="text-lg font-bold text-pink-600">Tk {food.price * quantity}</p>
+        <p className="text-lg font-bold text-pink-600">
+          Tk {food.price * quantity}
+        </p>
         <p className="text-gray-600">{food.description}</p>
 
         <div>
@@ -117,7 +133,7 @@ const OrderNow = () => {
           <span className="font-medium">{quantity}</span>
           <button
             type="button"
-            onClick={() => setQuantity((q) => Math.min(food.quantity || 99, q + 1))}
+            onClick={() => setQuantity((q) => Math.min(99, q + 1))}
             className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
           >
             +

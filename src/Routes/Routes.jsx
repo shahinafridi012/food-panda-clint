@@ -8,57 +8,102 @@ import OrderNow from "../pages/Home/OrderNow/OrderNow.jsx";
 import MyProfile from "../pages/MyProfile/MyProfile.jsx";
 import AllFoods from "../pages/Home/AllFoods/AllFoods.jsx";
 import PrivetRout from "./PrivetRout.jsx";
+import AdminRoute from "./AdminRoute.jsx";
+import DashboardLayout from "../pages/Dashboard/DashboardLayout.jsx";
+import AdminDashboard from "../pages/Dashboard/AdminDashboard.jsx";
+import ManageFoods from "../pages/Dashboard/ManageFoods.jsx";
+import ManageUsers from "../pages/Dashboard/ManageUsers.jsx";
+import AddFood from "../pages/Dashboard/AddFood.jsx";
+import UserDashboard from "../pages/Dashboard/UserDashboard.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
     children: [
+      { path: "/", element: <Home /> },
+      { path: "login", element: <Login /> },
+      { path: "signup", element: <SignUp /> },
+
+      // Dynamic route for ordering food
       {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "/signup",
-        element: <SignUp />,
-      },
-      {
-        path: "/food/:id",
-        element: (
-          <PrivetRout>
-            <ConfirmOrder />
-          </PrivetRout>
-        ),
-        loader: ({ params }) =>
-          fetch(`http://localhost:5000/food/${params.id}`),
-      },
-      {
-        path: "/add-food/:id",
+        path: "food/:id",
         element: (
           <PrivetRout>
             <OrderNow />
           </PrivetRout>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/food/${params.id}`),
+          fetch(`http://localhost:5000/foods/${params.id}`),
       },
+
+      // Optional confirm order page
       {
-        path: "/my-profile",
+        path: "confirm-order/:id",
+        element: (
+          <PrivetRout>
+            <ConfirmOrder />
+          </PrivetRout>
+        ),
+        loader: ({ params }) =>
+          fetch(`http://localhost:5000/foods/${params.id}`),
+      },
+
+      { path: "all-foods", element: <AllFoods /> },
+
+      {
+        path: "my-profile",
         element: (
           <PrivetRout>
             <MyProfile />
           </PrivetRout>
         ),
       },
+
+      // Dashboard routes
       {
-        path: "/all-foods",
-        element: <AllFoods />,
+        path: "dashboard",
+        element: (
+          <PrivetRout>
+            <DashboardLayout />
+          </PrivetRout>
+        ),
+        children: [
+          {
+            path: "admin",
+            element: (
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "manage-foods",
+            element: (
+              <AdminRoute>
+                <ManageFoods />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "manage-users",
+            element: (
+              <AdminRoute>
+                <ManageUsers />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "add-food",
+            element: (
+              <AdminRoute>
+                <AddFood />
+              </AdminRoute>
+            ),
+          },
+          { path: "user", element: <UserDashboard /> },
+        ],
       },
-     
     ],
   },
 ]);
