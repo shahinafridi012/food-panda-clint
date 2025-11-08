@@ -13,7 +13,7 @@ const MyProfile = () => {
     const fetchOrders = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/orders?email=${user.email}`,
+          `${import.meta.env.VITE_LIVE_PRODUCTION}/orders?email=${user.email}`,
           {
             headers: {
               authorization: `Bearer ${localStorage.getItem("access-token")}`,
@@ -42,7 +42,7 @@ const MyProfile = () => {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/orders/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/orders/${id}`, {
         method: "DELETE",
       });
 

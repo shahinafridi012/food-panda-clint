@@ -6,7 +6,7 @@ export default function ManageFoods() {
 
   // ✅ Load all foods from backend
   useEffect(() => {
-    fetch("http://localhost:5000/foods")
+    fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/foods")
       .then((res) => res.json())
       .then((data) => {
         setFoods(data);
@@ -24,7 +24,7 @@ export default function ManageFoods() {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/foods/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods/${id}`, {
         method: "DELETE",
       });
       const data = await res.json();

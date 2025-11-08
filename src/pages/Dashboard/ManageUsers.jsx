@@ -6,7 +6,7 @@ export default function ManageUsers() {
 
   // ✅ Load all users from database
   useEffect(() => {
-    fetch("http://localhost:5000/users")
+    fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/users")
       .then((res) => res.json())
       .then((data) => {
         setUsers(data);
@@ -24,7 +24,7 @@ export default function ManageUsers() {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/users/admin/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/users/admin/${id}`, {
         method: "PATCH",
       });
       const data = await res.json();
@@ -47,7 +47,7 @@ export default function ManageUsers() {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/users/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/users/${id}`, {
         method: "DELETE",
       });
       const data = await res.json();

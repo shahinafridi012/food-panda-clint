@@ -38,7 +38,7 @@ function FoodCard({ food }) {
           </span>
           <Link
             to={`/food/${_id}`} 
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-md hover:from-pink-600 hover:to-pink-700 transition-all duration-300"
+            className="inline-flex items-center gap-2 bg-linear-to-r from-pink-500 to-pink-600 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-md hover:from-pink-600 hover:to-pink-700 transition-all duration-300"
           >
             Order Now
           </Link>

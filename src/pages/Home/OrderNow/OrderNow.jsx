@@ -15,7 +15,7 @@ const OrderNow = () => {
 
   useEffect(() => {
     // Server route matches /foods/:id
-    fetch(`http://localhost:5000/foods/${id}`)
+    fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Food not found");
         return res.json();
@@ -51,7 +51,7 @@ const OrderNow = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/orders", {
+      const res = await fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

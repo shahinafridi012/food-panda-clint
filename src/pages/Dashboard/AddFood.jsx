@@ -40,7 +40,7 @@ export default function AddFood() {
         return;
       }
 
-      const res = await fetch("http://localhost:5000/foods", {
+      const res = await fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/foods", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
