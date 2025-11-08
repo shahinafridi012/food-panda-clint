@@ -51,14 +51,17 @@ const OrderNow = () => {
     };
 
     try {
-      const res = await fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${localStorage.getItem("access-token")}`,
-        },
-        body: JSON.stringify(orderInfo),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_LIVE_PRODUCTION}/orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("access-token")}`,
+          },
+          body: JSON.stringify(orderInfo),
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to place order");
 

@@ -38,11 +38,14 @@ const AuthProviders = ({ children }) => {
       if (currentUser?.email) {
         try {
           // 🔸 Request JWT from backend
-          const tokenRes = await fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/jwt", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: currentUser.email }),
-          });
+          const tokenRes = await fetch(
+            `${import.meta.env.VITE_LIVE_PRODUCTION}/jwt`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: currentUser.email }),
+            }
+          );
 
           const tokenData = await tokenRes.json();
           localStorage.setItem("access-token", tokenData.token);

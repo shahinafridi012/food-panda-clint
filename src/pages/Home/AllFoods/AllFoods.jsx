@@ -5,13 +5,15 @@ import { Link } from "react-router-dom";
 const AllFoods = () => {
   const [foods, setFoods] = useState([]);
 
-useEffect(() => {
-  fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/foods")
-    .then(res => res.json())
-    .then(data => setFoods(data))
-    .catch(err => console.error("Error fetching foods:", err));
-}, []);
-
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to fetch foods: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => setFoods(data))
+      .catch((err) => console.error("Error fetching foods:", err));
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -24,7 +26,6 @@ useEffect(() => {
         {foods.map((food) => (
           <div key={food._id} className="">
             <FoodCard food={food} />
-         
           </div>
         ))}
       </div>

@@ -26,7 +26,7 @@ const Login = () => {
         // Server e JWT request pathano
         const userInfo = { email: loggedUser.email };
 
-        fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/jwt", {
+        fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/jwt`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
