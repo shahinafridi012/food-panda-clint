@@ -158,7 +158,7 @@ export default function Navbar({ onSearch }) {
                     <div className="border-t border-gray-100 my-2" />
                  
                     <Link
-                      to="/profile/my-orders"
+                      to="/my-profile"
                       className="block px-4 py-2 text-sm hover:bg-gray-50 transition"
                     >
                       My Orders

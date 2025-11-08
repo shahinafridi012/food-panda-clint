@@ -19,8 +19,8 @@ export default function DashboardLayout() {
           </>
         ) : (
           <>
-            <Link to="/dashboard/user">My Profile</Link>
-            <Link to="/dashboard/my-orders">My Orders</Link>
+           
+            <Link to="/my-profile">My Orders</Link>
           </>
         )}
       </aside>
