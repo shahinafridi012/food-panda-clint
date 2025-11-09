@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_URL from "../../config"; // 🔹 config থেকে base URL
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -6,16 +7,24 @@ export default function ManageUsers() {
 
   // ✅ Load all users from database
   useEffect(() => {
-    fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/users")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(`${API_URL}/users`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access-token")}`, // JWT token attach
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const data = await res.json();
         setUsers(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error loading users:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchUsers();
   }, []);
 
   // ✅ Make Admin handler
@@ -24,20 +33,22 @@ export default function ManageUsers() {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/users/admin/${id}`, {
+      const res = await fetch(`${API_URL}/users/admin/${id}`, {
         method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       });
       const data = await res.json();
       if (data.modifiedCount > 0) {
         alert("User promoted to Admin ✅");
         setUsers((prev) =>
-          prev.map((u) =>
-            u._id === id ? { ...u, role: "admin" } : u
-          )
+          prev.map((u) => (u._id === id ? { ...u, role: "admin" } : u))
         );
       }
     } catch (err) {
       console.error("Failed to make admin:", err);
+      alert("Failed to promote user. Check console for details.");
     }
   };
 
@@ -47,8 +58,11 @@ export default function ManageUsers() {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/users/${id}`, {
+      const res = await fetch(`${API_URL}/users/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       });
       const data = await res.json();
       if (data.deletedCount > 0) {
@@ -57,6 +71,7 @@ export default function ManageUsers() {
       }
     } catch (err) {
       console.error("Delete failed:", err);
+      alert("Failed to delete user. Check console for details.");
     }
   };
 

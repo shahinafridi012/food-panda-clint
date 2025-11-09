@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../providers/AuthProviders";
+import API_URL from "../../config"; // 🔹 config থেকে base URL
 
 export default function AddFood() {
   const { user } = useContext(AuthContext);
@@ -22,7 +23,7 @@ export default function AddFood() {
 
     // Validation
     if (!food.name || !food.price || !food.image) {
-      alert(" Name, Price, and Image are required!");
+      alert("Name, Price, and Image are required!");
       return;
     }
 
@@ -33,14 +34,13 @@ export default function AddFood() {
 
     setLoading(true);
     try {
-      // ✅ Get token from localStorage
       const token = localStorage.getItem("access-token");
       if (!token) {
         alert("🚫 No token found! Please login again.");
         return;
       }
 
-      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods`, {
+      const res = await fetch(`${API_URL}/foods`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

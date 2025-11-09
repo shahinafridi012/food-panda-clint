@@ -3,15 +3,24 @@ import Banner from "./Banner/Banner";
 import FoodCard from "./AllFoods/Foodcard";
 import { Link } from "react-router-dom";
 import About from "../About/About";
+import API_URL from "../../config";
 
 const Home = () => {
   const [foods, setFoods] = useState([]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods`)
-      .then((res) => res.json())
-      .then((data) => setFoods(data))
-      .catch((err) => console.error("Error fetching foods:", err));
+    const fetchFoods = async () => {
+      try {
+        const res = await fetch(`${API_URL}/foods`);
+        if (!res.ok) throw new Error("Failed to fetch foods");
+        const data = await res.json();
+        setFoods(data);
+      } catch (err) {
+        console.error("Error fetching foods:", err);
+      }
+    };
+
+    fetchFoods();
   }, []);
 
   return (
@@ -40,7 +49,7 @@ const Home = () => {
         </div>
       </section>
 
-      <About></About>
+      <About />
     </div>
   );
 };

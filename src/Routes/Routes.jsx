@@ -15,6 +15,7 @@ import ManageFoods from "../pages/Dashboard/ManageFoods.jsx";
 import ManageUsers from "../pages/Dashboard/ManageUsers.jsx";
 import AddFood from "../pages/Dashboard/AddFood.jsx";
 import UserDashboard from "../pages/Dashboard/UserDashboard.jsx";
+import API_URL from "../config.js"; // 🔹 API base URL
 
 const router = createBrowserRouter([
   {
@@ -33,8 +34,7 @@ const router = createBrowserRouter([
             <OrderNow />
           </PrivetRout>
         ),
-        loader: ({ params }) =>
-          fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods/${params.id}`),
+        loader: ({ params }) => fetch(`${API_URL}/foods/${params.id}`),
       },
 
       // Optional confirm order page
@@ -45,8 +45,7 @@ const router = createBrowserRouter([
             <ConfirmOrder />
           </PrivetRout>
         ),
-        loader: ({ params }) =>
-          fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods/${params.id}`),
+        loader: ({ params }) => fetch(`${API_URL}/foods/${params.id}`),
       },
 
       { path: "all-foods", element: <AllFoods /> },

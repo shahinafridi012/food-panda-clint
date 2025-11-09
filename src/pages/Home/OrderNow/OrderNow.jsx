@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../providers/AuthProviders";
+import API_URL from "../../../config"; 
 
 const OrderNow = () => {
   const { id } = useParams();
@@ -13,20 +14,24 @@ const OrderNow = () => {
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [ifUnavailable, setIfUnavailable] = useState("Remove it from my order");
 
+  // 🔹 Food Load from API
   useEffect(() => {
-    // Server route matches /foods/:id
-    fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods/${id}`)
-      .then((res) => {
+    const fetchFood = async () => {
+      try {
+        const res = await fetch(`${API_URL}/foods/${id}`);
         if (!res.ok) throw new Error("Food not found");
-        return res.json();
-      })
-      .then((data) => setFood(data))
-      .catch((err) => {
+        const data = await res.json();
+        setFood(data);
+      } catch (err) {
         console.error("Error fetching food:", err);
         toast.error("Failed to fetch food!");
-      });
+      }
+    };
+
+    fetchFood();
   }, [id]);
 
+  // 🔹 Handle Order
   const handleOrder = async (e) => {
     e.preventDefault();
 
@@ -51,17 +56,14 @@ const OrderNow = () => {
     };
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_LIVE_PRODUCTION}/orders`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${localStorage.getItem("access-token")}`,
-          },
-          body: JSON.stringify(orderInfo),
-        }
-      );
+      const res = await fetch(`${API_URL}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
+        body: JSON.stringify(orderInfo),
+      });
 
       if (!res.ok) throw new Error("Failed to place order");
 
@@ -71,7 +73,6 @@ const OrderNow = () => {
         toast.success("Order placed successfully!");
         setQuantity(1);
         setSpecialInstructions("");
-        // Redirect to user dashboard after success
         navigate("/dashboard/user");
       } else {
         toast.error("Failed to place order!");

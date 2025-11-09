@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../providers/AuthProviders";
+import API_URL from "../../config"; // 🔹 config থেকে base URL
 
 const MyProfile = () => {
   const { user } = useContext(AuthContext);
@@ -12,14 +13,11 @@ const MyProfile = () => {
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_LIVE_PRODUCTION}/orders?email=${user.email}`,
-          {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem("access-token")}`,
-            },
-          }
-        );
+        const res = await fetch(`${API_URL}/orders?email=${user.email}`, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("access-token")}`,
+          },
+        });
 
         if (!res.ok) {
           throw new Error("Failed to fetch orders");
@@ -38,12 +36,17 @@ const MyProfile = () => {
   }, [user]);
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm("Are you sure you want to cancel this order?");
+    const confirm = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
     if (!confirm) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/orders/${id}`, {
+      const res = await fetch(`${API_URL}/orders/${id}`, {
         method: "DELETE",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       });
 
       const data = await res.json();

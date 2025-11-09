@@ -1,13 +1,14 @@
 import { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProviders.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
+import API_URL from "../../config.js"; // 🔹 config থেকে base URL নিলাম
 
 const Login = () => {
   const { signIn } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Login er por redirect korar jonno
+  // Login এর পর redirect এর জন্য
   const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = (e) => {
@@ -16,33 +17,30 @@ const Login = () => {
     const email = form.email.value;
     const password = form.password.value;
 
-    console.log("Email:", email, "Password:", password);
-
     signIn(email, password)
       .then((result) => {
         const loggedUser = result.user;
-        console.log(" Logged User:", loggedUser);
 
-        // Server e JWT request pathano
+        // Server এ JWT request pathano
         const userInfo = { email: loggedUser.email };
 
-        fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/jwt`, {
+        fetch(`${API_URL}/jwt`, {
           method: "POST",
           headers: {
-            "content-type": "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(userInfo),
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(" JWT token:", data.token);
-            // Token localStorage e save
+            // Token localStorage এ save
             localStorage.setItem("access-token", data.token);
             navigate(from, { replace: true });
-          });
+          })
+          .catch((err) => console.error("JWT Error:", err));
       })
       .catch((error) => {
-        console.error(" SignIn Error:", error.message);
+        console.error("SignIn Error:", error.message);
       });
   };
 

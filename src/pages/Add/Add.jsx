@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useLoaderData } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProviders";
+import API_URL from "../../config"; // 🔹 base URL from config
 
 const ConfirmOrder = () => {
   const food = useLoaderData();
@@ -14,9 +15,12 @@ const ConfirmOrder = () => {
       orderedBy: user?.email || "Anonymous",
     };
 
-    fetch("${import.meta.env.VITE_LIVE_PRODUCTION}/orders", {
+    fetch(`${API_URL}/orders`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("access-token")}`, // JWT ব্যবহার
+      },
       body: JSON.stringify(order),
     })
       .then((res) => res.json())
@@ -44,7 +48,9 @@ const ConfirmOrder = () => {
           />
         )}
         <h3 className="text-xl font-semibold mb-2">{foodName}</h3>
-        <p className="text-lg font-medium mb-6">Price: ${foodPrice.toFixed(2)}</p>
+        <p className="text-lg font-medium mb-6">
+          Price: Tk {foodPrice.toFixed(2)}
+        </p>
         <button
           onClick={handleConfirm}
           className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full transition"

@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import FoodCard from "./Foodcard";
-import { Link } from "react-router-dom";
+import API_URL from "../../config"; // 🔹 base URL from config
 
 const AllFoods = () => {
   const [foods, setFoods] = useState([]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_LIVE_PRODUCTION}/foods`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch foods: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => setFoods(data))
-      .catch((err) => console.error("Error fetching foods:", err));
+    const fetchFoods = async () => {
+      try {
+        const res = await fetch(`${API_URL}/foods`);
+        if (!res.ok) throw new Error("Failed to fetch foods");
+        const data = await res.json();
+        setFoods(data);
+      } catch (err) {
+        console.error("Error fetching foods:", err);
+      }
+    };
+
+    fetchFoods();
   }, []);
 
   return (
@@ -24,7 +29,7 @@ const AllFoods = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {foods.map((food) => (
-          <div key={food._id} className="">
+          <div key={food._id}>
             <FoodCard food={food} />
           </div>
         ))}
