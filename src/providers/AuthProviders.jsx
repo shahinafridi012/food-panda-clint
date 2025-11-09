@@ -7,8 +7,6 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import app from "../firebase/firebase.config";
-import API_URL from "../config";
-
 
 export const AuthContext = createContext();
 const auth = getAuth(app);
@@ -39,8 +37,8 @@ const AuthProviders = ({ children }) => {
 
       if (currentUser?.email) {
         try {
-          // 🔸 Request JWT from backend
-          const tokenRes = await fetch(`${API_URL}/jwt`, {
+          // 🔸 Request JWT from local backend
+          const tokenRes = await fetch("http://localhost:5000/jwt", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: currentUser.email }),
@@ -49,8 +47,11 @@ const AuthProviders = ({ children }) => {
           const tokenData = await tokenRes.json();
           localStorage.setItem("access-token", tokenData.token);
 
-          // 🔸 Fetch user role from backend
-          const roleRes = await fetch(`${API_URL}/users/${currentUser.email}`);
+          // 🔸 Fetch user role from local backend
+          const roleRes = await fetch(
+            `http://localhost:5000/users/${currentUser.email}`
+          );
+
           const roleData = await roleRes.json();
 
           // 🔸 Merge role into user object

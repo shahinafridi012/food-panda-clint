@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../providers/AuthProviders";
-import API_URL from "../../../config"; 
 
 const OrderNow = () => {
   const { id } = useParams();
@@ -14,24 +13,20 @@ const OrderNow = () => {
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [ifUnavailable, setIfUnavailable] = useState("Remove it from my order");
 
-  // 🔹 Food Load from API
   useEffect(() => {
-    const fetchFood = async () => {
-      try {
-        const res = await fetch(`${API_URL}/foods/${id}`);
+    // Server route matches /foods/:id
+    fetch(`http://localhost:5000/foods/${id}`)
+      .then((res) => {
         if (!res.ok) throw new Error("Food not found");
-        const data = await res.json();
-        setFood(data);
-      } catch (err) {
+        return res.json();
+      })
+      .then((data) => setFood(data))
+      .catch((err) => {
         console.error("Error fetching food:", err);
         toast.error("Failed to fetch food!");
-      }
-    };
-
-    fetchFood();
+      });
   }, [id]);
 
-  // 🔹 Handle Order
   const handleOrder = async (e) => {
     e.preventDefault();
 
@@ -56,7 +51,7 @@ const OrderNow = () => {
     };
 
     try {
-      const res = await fetch(`${API_URL}/orders`, {
+      const res = await fetch("http://localhost:5000/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,6 +68,7 @@ const OrderNow = () => {
         toast.success("Order placed successfully!");
         setQuantity(1);
         setSpecialInstructions("");
+        // Redirect to user dashboard after success
         navigate("/dashboard/user");
       } else {
         toast.error("Failed to place order!");

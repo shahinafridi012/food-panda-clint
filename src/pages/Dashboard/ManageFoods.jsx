@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import API_URL from "../../config"; // 🔹 config থেকে base URL
 
 export default function ManageFoods() {
   const [foods, setFoods] = useState([]);
@@ -7,20 +6,16 @@ export default function ManageFoods() {
 
   // ✅ Load all foods from backend
   useEffect(() => {
-    const fetchFoods = async () => {
-      try {
-        const res = await fetch(`${API_URL}/foods`);
-        if (!res.ok) throw new Error("Failed to fetch foods");
-        const data = await res.json();
+    fetch("http://localhost:5000/foods")
+      .then((res) => res.json())
+      .then((data) => {
         setFoods(data);
-      } catch (err) {
-        console.error("Error fetching foods:", err);
-      } finally {
         setLoading(false);
-      }
-    };
-
-    fetchFoods();
+      })
+      .catch((err) => {
+        console.error("Error fetching foods:", err);
+        setLoading(false);
+      });
   }, []);
 
   // ✅ Delete food
@@ -29,14 +24,9 @@ export default function ManageFoods() {
     if (!confirm) return;
 
     try {
-      const token = localStorage.getItem("access-token");
-      const res = await fetch(`${API_URL}/foods/${id}`, {
+      const res = await fetch(`http://localhost:5000/foods/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`, // JWT token attach
-        },
       });
-
       const data = await res.json();
       if (data.deletedCount > 0) {
         setFoods((prev) => prev.filter((f) => f._id !== id));
@@ -44,7 +34,6 @@ export default function ManageFoods() {
       }
     } catch (err) {
       console.error("Delete failed:", err);
-      alert("Failed to delete food. Check console for details.");
     }
   };
 
@@ -93,6 +82,7 @@ export default function ManageFoods() {
                     >
                       Delete
                     </button>
+                    {/* (Optional) You can add an Edit button later */}
                   </td>
                 </tr>
               ))}
