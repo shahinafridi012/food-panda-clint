@@ -34,7 +34,7 @@ const router = createBrowserRouter([
           </PrivetRout>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/foods/${params.id}`),
+          fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`),
       },
 
       // Optional confirm order page
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
           </PrivetRout>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/foods/${params.id}`),
+          fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`),
       },
 
       { path: "all-foods", element: <AllFoods /> },

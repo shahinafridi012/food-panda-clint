@@ -26,7 +26,8 @@ const Login = () => {
         // Server e JWT request pathano
         const userInfo = { email: loggedUser.email };
 
-        fetch("http://localhost:5000/jwt", {
+        // ✅ .env theke API URL use
+        fetch(`${import.meta.env.VITE_API_URL}/jwt`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -39,6 +40,9 @@ const Login = () => {
             // Token localStorage e save
             localStorage.setItem("access-token", data.token);
             navigate(from, { replace: true });
+          })
+          .catch((error) => {
+            console.error(" JWT Fetch Error:", error);
           });
       })
       .catch((error) => {
