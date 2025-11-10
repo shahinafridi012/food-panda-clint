@@ -4,10 +4,21 @@ export default function ManageFoods() {
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Load all foods from backend
+  const API_URL = import.meta.env.VITE_API_URL;
+  console.log("API_URL:", API_URL); // Debugging
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/foods`)
-      .then((res) => res.json())
+    if (!API_URL) {
+      console.error("API_URL is undefined! Check your .env file and restart Vite.");
+      setLoading(false);
+      return;
+    }
+
+    fetch(`${API_URL}/foods`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         setFoods(data);
         setLoading(false);
@@ -16,24 +27,30 @@ export default function ManageFoods() {
         console.error("Error fetching foods:", err);
         setLoading(false);
       });
-  }, []);
+  }, [API_URL]);
 
-  // ✅ Delete food
+  // Delete food
   const handleDelete = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this food?");
-    if (!confirm) return;
+    const confirmDelete = window.confirm("Are you sure you want to delete this food?");
+    if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/foods/${id}`, {
+      const res = await fetch(`${API_URL}/foods/${id}`, {
         method: "DELETE",
       });
+
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
       const data = await res.json();
       if (data.deletedCount > 0) {
         setFoods((prev) => prev.filter((f) => f._id !== id));
         alert("Food deleted successfully!");
+      } else {
+        alert("Failed to delete food.");
       }
     } catch (err) {
       console.error("Delete failed:", err);
+      alert("Error deleting food. Check console for details.");
     }
   };
 
@@ -82,7 +99,6 @@ export default function ManageFoods() {
                     >
                       Delete
                     </button>
-                    {/* (Optional) You can add an Edit button later */}
                   </td>
                 </tr>
               ))}

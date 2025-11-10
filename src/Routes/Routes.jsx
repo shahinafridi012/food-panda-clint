@@ -15,6 +15,7 @@ import ManageFoods from "../pages/Dashboard/ManageFoods.jsx";
 import ManageUsers from "../pages/Dashboard/ManageUsers.jsx";
 import AddFood from "../pages/Dashboard/AddFood.jsx";
 import UserDashboard from "../pages/Dashboard/UserDashboard.jsx";
+import NotFound from "../pages/NotFound.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,8 +25,19 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
+      { path: "all-foods", element: <AllFoods />, 
+        loader: async () => {
+          try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/foods`);
+            if (!res.ok) throw new Error("Failed to fetch foods");
+            return res.json();
+          } catch (err) {
+            return { error: err.message };
+          }
+        },
+      },
 
-      // Dynamic route for ordering food
+      // Dynamic route: order food
       {
         path: "food/:id",
         element: (
@@ -33,11 +45,18 @@ const router = createBrowserRouter([
             <OrderNow />
           </PrivetRout>
         ),
-        loader: ({ params }) =>
-          fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`),
+        loader: async ({ params }) => {
+          try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`);
+            if (!res.ok) throw new Error("Food not found");
+            return res.json();
+          } catch (err) {
+            return { error: err.message };
+          }
+        },
       },
 
-      // Optional confirm order page
+      // Confirm order page
       {
         path: "confirm-order/:id",
         element: (
@@ -45,12 +64,18 @@ const router = createBrowserRouter([
             <ConfirmOrder />
           </PrivetRout>
         ),
-        loader: ({ params }) =>
-          fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`),
+        loader: async ({ params }) => {
+          try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`);
+            if (!res.ok) throw new Error("Food not found");
+            return res.json();
+          } catch (err) {
+            return { error: err.message };
+          }
+        },
       },
 
-      { path: "all-foods", element: <AllFoods /> },
-
+      // My Profile (private)
       {
         path: "my-profile",
         element: (
@@ -60,7 +85,7 @@ const router = createBrowserRouter([
         ),
       },
 
-      // Dashboard routes
+      // Dashboard (private)
       {
         path: "dashboard",
         element: (
@@ -69,6 +94,7 @@ const router = createBrowserRouter([
           </PrivetRout>
         ),
         children: [
+          // Admin routes
           {
             path: "admin",
             element: (
@@ -101,9 +127,13 @@ const router = createBrowserRouter([
               </AdminRoute>
             ),
           },
+          // Normal user dashboard
           { path: "user", element: <UserDashboard /> },
         ],
       },
+
+      // 404 Not Found
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);

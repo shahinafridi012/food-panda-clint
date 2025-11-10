@@ -15,7 +15,7 @@ const AuthProviders = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Create User
+  // 🔹 Create User (Sign Up)
   const createUser = (email, password) =>
     createUserWithEmailAndPassword(auth, email, password);
 
@@ -30,39 +30,48 @@ const AuthProviders = ({ children }) => {
     return signOut(auth);
   };
 
-  // 🔹 Track Auth State + Fetch JWT + Role
+  // 🔹 Track Auth State, Fetch JWT and Role
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
 
       if (currentUser?.email) {
         try {
-          // 🔸 Request JWT from local backend
+          // 1️⃣ Request JWT from backend
           const tokenRes = await fetch(`${import.meta.env.VITE_API_URL}/jwt`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: currentUser.email }),
           });
 
+          if (!tokenRes.ok) throw new Error("Failed to fetch JWT");
           const tokenData = await tokenRes.json();
           localStorage.setItem("access-token", tokenData.token);
 
-          // 🔸 Fetch user role from local backend
+          // 2️⃣ Fetch user role from backend
           const roleRes = await fetch(
-            `${import.meta.env.VITE_API_URL}/users/${currentUser.email}`
+            `${import.meta.env.VITE_API_URL}/users/${currentUser.email}`,
+            {
+              headers: {
+                authorization: `Bearer ${tokenData.token}`,
+              },
+            }
           );
 
+          if (!roleRes.ok) throw new Error("Failed to fetch user role");
           const roleData = await roleRes.json();
 
-          // 🔸 Merge role into user object
+          // 3️⃣ Merge role into Firebase user object
           setUser({ ...currentUser, role: roleData.role || "user" });
         } catch (error) {
           console.error("AuthProviders Error:", error);
-          setUser(currentUser); // fallback to normal user
+          // fallback to normal Firebase user if JWT/role fails
+          setUser(currentUser);
         } finally {
           setLoading(false);
         }
       } else {
+        // User logged out
         localStorage.removeItem("access-token");
         setUser(null);
         setLoading(false);

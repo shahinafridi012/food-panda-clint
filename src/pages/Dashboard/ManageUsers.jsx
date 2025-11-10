@@ -4,10 +4,21 @@ export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
+  const API_URL = import.meta.env.VITE_API_URL;
+  console.log("API_URL:", API_URL); // Debug
+
   useEffect(() => {
-    fetch("${import.meta.env.VITE_API_URL}/users")
-      .then((res) => res.json())
+    if (!API_URL) {
+      console.error("API_URL is undefined! Check your .env file and restart Vite.");
+      setLoading(false);
+      return;
+    }
+
+    fetch(`${API_URL}/users`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         setUsers(data);
         setLoading(false);
@@ -16,40 +27,37 @@ export default function ManageUsers() {
         console.error("Error loading users:", err);
         setLoading(false);
       });
-  }, []);
+  }, [API_URL]);
 
-  
   const handleMakeAdmin = async (id) => {
-    const confirm = window.confirm("Make this user an Admin?");
-    if (!confirm) return;
+    if (!API_URL) return;
+    const confirmAction = window.confirm("Make this user an Admin?");
+    if (!confirmAction) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/admin/${id}`, {
-        method: "PATCH",
-      });
+      const res = await fetch(`${API_URL}/users/admin/${id}`, { method: "PATCH" });
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
       const data = await res.json();
       if (data.modifiedCount > 0) {
         alert("User promoted to Admin ✅");
         setUsers((prev) =>
-          prev.map((u) =>
-            u._id === id ? { ...u, role: "admin" } : u
-          )
+          prev.map((u) => (u._id === id ? { ...u, role: "admin" } : u))
         );
       }
     } catch (err) {
       console.error("Failed to make admin:", err);
+      alert("Failed to promote user. Check console.");
     }
   };
 
-  // ✅ Delete user
   const handleDelete = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this user?");
-    if (!confirm) return;
+    if (!API_URL) return;
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`${API_URL}/users/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
       const data = await res.json();
       if (data.deletedCount > 0) {
         alert("User deleted ❌");
@@ -57,6 +65,7 @@ export default function ManageUsers() {
       }
     } catch (err) {
       console.error("Delete failed:", err);
+      alert("Failed to delete user. Check console.");
     }
   };
 
@@ -70,7 +79,6 @@ export default function ManageUsers() {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Manage Users</h2>
-
       {users.length === 0 ? (
         <p className="text-gray-500">No users found.</p>
       ) : (
@@ -78,18 +86,10 @@ export default function ManageUsers() {
           <table className="min-w-full border border-gray-200 rounded-lg shadow-sm">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                  Name
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                  Email
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                  Role
-                </th>
-                <th className="px-4 py-2 text-center text-sm font-semibold text-gray-700">
-                  Actions
-                </th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Email</th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Role</th>
+                <th className="px-4 py-2 text-center text-sm font-semibold text-gray-700">Actions</th>
               </tr>
             </thead>
             <tbody>

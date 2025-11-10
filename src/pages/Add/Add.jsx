@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useLoaderData } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProviders";
 
-const ConfirmOrder = () => {
+const Add = () => {
   const food = useLoaderData();
   const { name: foodName, price: foodPrice, imageUrl } = food;
   const { user } = useContext(AuthContext);
@@ -56,4 +56,4 @@ const ConfirmOrder = () => {
   );
 };
 
-export default ConfirmOrder;
+export default Add;

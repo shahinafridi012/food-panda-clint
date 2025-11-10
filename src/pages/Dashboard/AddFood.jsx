@@ -17,69 +17,65 @@ export default function AddFood() {
     setFood({ ...food, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Validation
-    if (!food.name || !food.price || !food.image) {
-      alert(" Name, Price, and Image are required!");
+  // Validation
+  if (!food.name || !food.price || !food.image) {
+    alert(" Name, Price, and Image are required!");
+    return;
+  }
+
+  if (!user || user.role !== "admin") {
+    alert("🚫 Only admin can add foods!");
+    return;
+  }
+
+  const API_URL = import.meta.env.VITE_API_URL;
+  if (!API_URL) {
+    console.error("API_URL is undefined! Check your .env file and restart Vite.");
+    alert("Server URL is not configured. Contact support.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const token = localStorage.getItem("access-token");
+    if (!token) {
+      alert("🚫 No token found! Please login again.");
       return;
     }
 
-    if (!user || user.role !== "admin") {
-      alert("🚫 Only admin can add foods!");
-      return;
+    const res = await fetch(`${API_URL}/foods`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // JWT token attach
+      },
+      body: JSON.stringify(food),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server responded with ${res.status}`);
     }
 
-    setLoading(true);
-    try {
-      // ✅ Get token from localStorage
-      const token = localStorage.getItem("access-token");
-      if (!token) {
-        alert("🚫 No token found! Please login again.");
-        return;
-      }
+    const data = await res.json();
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/foods`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // JWT token attach
-        },
-        body: JSON.stringify(food),
-      });
-
-      if (res.status === 401) {
-        alert("🚫 Unauthorized! Please login as admin.");
-        return;
-      }
-
-      if (res.status === 403) {
-        alert("🚫 Forbidden! You don't have permission to add foods.");
-        return;
-      }
-
-      const data = await res.json();
-
-      if (data.insertedId) {
-        alert("✅ Food added successfully!");
-        setFood({
-          name: "",
-          category: "",
-          price: "",
-          image: "",
-          description: "",
-        });
-      } else {
-        alert("❌ Failed to add food");
-      }
-    } catch (err) {
-      console.error("Add food error:", err);
-      alert("❌ Error adding food. Check console for details.");
-    } finally {
-      setLoading(false);
+    if (data.insertedId) {
+      alert("✅ Food added successfully!");
+      setFood({ name: "", category: "", price: "", image: "", description: "" });
+    } else {
+      alert("❌ Failed to add food");
     }
-  };
+  } catch (err) {
+    console.error("Add food error:", err);
+    alert("❌ Error adding food. Check console for details.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="p-6 max-w-3xl mx-auto">

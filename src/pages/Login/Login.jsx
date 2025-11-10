@@ -1,53 +1,48 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProviders.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // 👈 React Icons
 
 const Login = () => {
   const { signIn } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showPassword, setShowPassword] = useState(false); // 👈 password toggle state
 
-  // Login er por redirect korar jonno
   const from = location.state?.from?.pathname || "/";
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
     const password = form.password.value;
 
-    console.log("Email:", email, "Password:", password);
+    try {
+      const result = await signIn(email, password);
+      const loggedUser = result.user;
 
-    signIn(email, password)
-      .then((result) => {
-        const loggedUser = result.user;
-        console.log(" Logged User:", loggedUser);
+      const userInfo = { email: loggedUser.email };
+      const API_URL = import.meta.env.VITE_API_URL;
+      if (!API_URL) {
+        alert("API URL is not configured. Check .env file.");
+        return;
+      }
 
-        // Server e JWT request pathano
-        const userInfo = { email: loggedUser.email };
-
-        // ✅ .env theke API URL use
-        fetch(`${import.meta.env.VITE_API_URL}/jwt`, {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(userInfo),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(" JWT token:", data.token);
-            // Token localStorage e save
-            localStorage.setItem("access-token", data.token);
-            navigate(from, { replace: true });
-          })
-          .catch((error) => {
-            console.error(" JWT Fetch Error:", error);
-          });
-      })
-      .catch((error) => {
-        console.error(" SignIn Error:", error.message);
+      const res = await fetch(`${API_URL}/jwt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userInfo),
       });
+
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+      const data = await res.json();
+      localStorage.setItem("access-token", data.token);
+
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Login failed. Check console for details.");
+    }
   };
 
   return (
@@ -56,6 +51,7 @@ const Login = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Login</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email */}
           <div>
             <label htmlFor="email" className="block mb-1 text-gray-700">
               Email
@@ -70,23 +66,31 @@ const Login = () => {
             />
           </div>
 
-          <div>
+          {/* Password with toggle */}
+          <div className="relative">
             <label htmlFor="password" className="block mb-1 text-gray-700">
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               id="password"
               placeholder="••••••••"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
+            <span
+              className="absolute right-3 top-9 cursor-pointer text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+            </span>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
           >
             Sign In
           </button>
