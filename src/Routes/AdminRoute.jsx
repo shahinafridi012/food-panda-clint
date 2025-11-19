@@ -7,7 +7,11 @@ const AdminRoute = ({ children }) => {
   const location = useLocation();
 
   if (loading) return <div>Loading...</div>;
-  if (user?.role !== "admin") return <Navigate to="/" state={{ from: location }} replace />;
+
+  // Allow both 'admin' and 'super admin'
+  if (user?.role !== "admin" && user?.role !== "super admin") {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
 
   return children;
 };

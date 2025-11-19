@@ -1,13 +1,13 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProviders.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // 👈 React Icons
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const Login = () => {
   const { signIn } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const [showPassword, setShowPassword] = useState(false); // 👈 password toggle state
+  const [showPassword, setShowPassword] = useState(false);
 
   const from = location.state?.from?.pathname || "/";
 
@@ -21,12 +21,9 @@ const Login = () => {
       const result = await signIn(email, password);
       const loggedUser = result.user;
 
+      // JWT request
       const userInfo = { email: loggedUser.email };
-      const API_URL = import.meta.env.VITE_API_URL;
-      if (!API_URL) {
-        alert("API URL is not configured. Check .env file.");
-        return;
-      }
+      const API_URL = "http://localhost:5000"; // 🔹 Backend API URL direct
 
       const res = await fetch(`${API_URL}/jwt`, {
         method: "POST",
@@ -51,11 +48,8 @@ const Login = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Login</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
           <div>
-            <label htmlFor="email" className="block mb-1 text-gray-700">
-              Email
-            </label>
+            <label htmlFor="email" className="block mb-1 text-gray-700">Email</label>
             <input
               type="email"
               name="email"
@@ -66,11 +60,8 @@ const Login = () => {
             />
           </div>
 
-          {/* Password with toggle */}
           <div className="relative">
-            <label htmlFor="password" className="block mb-1 text-gray-700">
-              Password
-            </label>
+            <label htmlFor="password" className="block mb-1 text-gray-700">Password</label>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -87,7 +78,6 @@ const Login = () => {
             </span>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"

@@ -17,65 +17,58 @@ export default function AddFood() {
     setFood({ ...food, [name]: value });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Validation
-  if (!food.name || !food.price || !food.image) {
-    alert(" Name, Price, and Image are required!");
-    return;
-  }
-
-  if (!user || user.role !== "admin") {
-    alert("🚫 Only admin can add foods!");
-    return;
-  }
-
-  const API_URL = import.meta.env.VITE_API_URL;
-  if (!API_URL) {
-    console.error("API_URL is undefined! Check your .env file and restart Vite.");
-    alert("Server URL is not configured. Contact support.");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const token = localStorage.getItem("access-token");
-    if (!token) {
-      alert("🚫 No token found! Please login again.");
+    if (!food.name || !food.price || !food.image) {
+      alert("Name, Price, and Image are required!");
       return;
     }
 
-    const res = await fetch(`${API_URL}/foods`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // JWT token attach
-      },
-      body: JSON.stringify(food),
-    });
-
-    if (!res.ok) {
-      throw new Error(`Server responded with ${res.status}`);
+    // ✅ Allow both admin and super admin
+    if (!user || (user.role !== "admin" && user.role !== "super admin")) {
+      alert("🚫 Only admin or super admin can add foods!");
+      return;
     }
 
-    const data = await res.json();
+    setLoading(true);
 
-    if (data.insertedId) {
-      alert("✅ Food added successfully!");
-      setFood({ name: "", category: "", price: "", image: "", description: "" });
-    } else {
-      alert("❌ Failed to add food");
+    try {
+      const token = localStorage.getItem("access-token");
+      if (!token) {
+        alert("🚫 No token found! Please login again.");
+        return;
+      }
+
+      // ⚡ Direct backend URL without .env
+      const res = await fetch(`http://localhost:5000/foods`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // JWT token attach
+        },
+        body: JSON.stringify(food),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server responded with ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      if (data.insertedId) {
+        alert("✅ Food added successfully!");
+        setFood({ name: "", category: "", price: "", image: "", description: "" });
+      } else {
+        alert("❌ Failed to add food");
+      }
+    } catch (err) {
+      console.error("Add food error:", err);
+      alert("❌ Error adding food. Check console for details.");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Add food error:", err);
-    alert("❌ Error adding food. Check console for details.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="p-6 max-w-3xl mx-auto">

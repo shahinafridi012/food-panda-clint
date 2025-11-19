@@ -38,7 +38,7 @@ const AuthProviders = ({ children }) => {
       if (currentUser?.email) {
         try {
           // 1️⃣ Request JWT from backend
-          const tokenRes = await fetch(`${import.meta.env.VITE_API_URL}/jwt`, {
+          const tokenRes = await fetch(`http://localhost:5000/jwt`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: currentUser.email }),
@@ -50,7 +50,9 @@ const AuthProviders = ({ children }) => {
 
           // 2️⃣ Fetch user role from backend
           const roleRes = await fetch(
-            `${import.meta.env.VITE_API_URL}/users/${currentUser.email}`,
+            `http://localhost:5000/users/${encodeURIComponent(
+              currentUser.email
+            )}`,
             {
               headers: {
                 authorization: `Bearer ${tokenData.token}`,
@@ -58,15 +60,19 @@ const AuthProviders = ({ children }) => {
             }
           );
 
-          if (!roleRes.ok) throw new Error("Failed to fetch user role");
-          const roleData = await roleRes.json();
-
-          // 3️⃣ Merge role into Firebase user object
-          setUser({ ...currentUser, role: roleData.role || "user" });
+          if (!roleRes.ok) {
+            console.warn(
+              `Failed to fetch role for ${currentUser.email}, defaulting to 'user'`
+            );
+            setUser({ ...currentUser, role: "user" });
+          } else {
+            const roleData = await roleRes.json();
+            setUser({ ...currentUser, role: roleData.role || "user" });
+          }
         } catch (error) {
           console.error("AuthProviders Error:", error);
           // fallback to normal Firebase user if JWT/role fails
-          setUser(currentUser);
+          setUser({ ...currentUser, role: "user" });
         } finally {
           setLoading(false);
         }

@@ -28,7 +28,7 @@ const router = createBrowserRouter([
       { path: "all-foods", element: <AllFoods />, 
         loader: async () => {
           try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/foods`);
+            const res = await fetch(`http://localhost:5000/foods`);
             if (!res.ok) throw new Error("Failed to fetch foods");
             return res.json();
           } catch (err) {
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
         ),
         loader: async ({ params }) => {
           try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`);
+            const res = await fetch(`http://localhost:5000/foods/${params.id}`);
             if (!res.ok) throw new Error("Food not found");
             return res.json();
           } catch (err) {
@@ -66,7 +66,7 @@ const router = createBrowserRouter([
         ),
         loader: async ({ params }) => {
           try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/foods/${params.id}`);
+            const res = await fetch(`http://localhost:5000/foods/${params.id}`);
             if (!res.ok) throw new Error("Food not found");
             return res.json();
           } catch (err) {

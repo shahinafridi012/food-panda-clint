@@ -23,7 +23,7 @@ const Banner = () => {
 
   return (
     <div
-      className="relative w-full h-[600px] overflow-hidden rounded-2xl shadow-lg"
+      className="relative w-full h-[600px] overflow-hidden  shadow-lg"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

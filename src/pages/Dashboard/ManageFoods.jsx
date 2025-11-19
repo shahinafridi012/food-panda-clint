@@ -14,7 +14,7 @@ export default function ManageFoods() {
       return;
     }
 
-    fetch(`${API_URL}/foods`)
+    fetch(`http://localhost:5173/foods`)
       .then((res) => {
         if (!res.ok) throw new Error(`Server responded with ${res.status}`);
         return res.json();
@@ -35,7 +35,7 @@ export default function ManageFoods() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${API_URL}/foods/${id}`, {
+      const res = await fetch(`http://localhost:5173/foods/${id}`, {
         method: "DELETE",
       });
 

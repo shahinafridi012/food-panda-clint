@@ -14,7 +14,7 @@ const Add = () => {
       orderedBy: user?.email || "Anonymous",
     };
 
-    fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+    fetch(`http://localhost:5000/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(order),
