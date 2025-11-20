@@ -14,6 +14,7 @@ import AdminDashboard from "../pages/Dashboard/AdminDashboard.jsx";
 import ManageFoods from "../pages/Dashboard/ManageFoods.jsx";
 import ManageUsers from "../pages/Dashboard/ManageUsers.jsx";
 import AddFood from "../pages/Dashboard/AddFood.jsx";
+import AddAdmin from "../pages/Dashboard/AddAdmin.jsx"; // ✅ AddAdmin import
 import UserDashboard from "../pages/Dashboard/UserDashboard.jsx";
 import NotFound from "../pages/NotFound.jsx";
 
@@ -25,7 +26,9 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
-      { path: "all-foods", element: <AllFoods />, 
+      {
+        path: "all-foods",
+        element: <AllFoods />,
         loader: async () => {
           try {
             const res = await fetch(`http://localhost:5000/foods`);
@@ -36,8 +39,6 @@ const router = createBrowserRouter([
           }
         },
       },
-
-      // Dynamic route: order food
       {
         path: "food/:id",
         element: (
@@ -55,8 +56,6 @@ const router = createBrowserRouter([
           }
         },
       },
-
-      // Confirm order page
       {
         path: "confirm-order/:id",
         element: (
@@ -74,8 +73,6 @@ const router = createBrowserRouter([
           }
         },
       },
-
-      // My Profile (private)
       {
         path: "my-profile",
         element: (
@@ -84,8 +81,6 @@ const router = createBrowserRouter([
           </PrivetRout>
         ),
       },
-
-      // Dashboard (private)
       {
         path: "dashboard",
         element: (
@@ -127,12 +122,18 @@ const router = createBrowserRouter([
               </AdminRoute>
             ),
           },
+          {
+            path: "add-admin", // ✅ AddAdmin route
+            element: (
+              <AdminRoute>
+                <AddAdmin />
+              </AdminRoute>
+            ),
+          },
           // Normal user dashboard
           { path: "user", element: <UserDashboard /> },
         ],
       },
-
-      // 404 Not Found
       { path: "*", element: <NotFound /> },
     ],
   },

@@ -19,143 +19,99 @@ export default function AddFood() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!food.name || !food.price || !food.image) {
-      alert("Name, Price, and Image are required!");
-      return;
-    }
-
-    // ✅ Allow both admin and super admin
+    if (!food.name || !food.price || !food.image) return alert("Name, Price & Image required!");
     if (!user || (user.role !== "admin" && user.role !== "super admin")) {
-      alert("🚫 Only admin or super admin can add foods!");
-      return;
+      return alert("🚫 Only admin or super admin can add foods!");
     }
 
     setLoading(true);
-
     try {
       const token = localStorage.getItem("access-token");
-      if (!token) {
-        alert("🚫 No token found! Please login again.");
-        return;
-      }
-
-      // ⚡ Direct backend URL without .env
       const res = await fetch(`http://localhost:5000/foods`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // JWT token attach
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(food),
       });
-
-      if (!res.ok) {
-        throw new Error(`Server responded with ${res.status}`);
-      }
-
       const data = await res.json();
-
       if (data.insertedId) {
         alert("✅ Food added successfully!");
         setFood({ name: "", category: "", price: "", image: "", description: "" });
-      } else {
-        alert("❌ Failed to add food");
-      }
+      } else alert("❌ Failed to add food");
     } catch (err) {
-      console.error("Add food error:", err);
-      alert("❌ Error adding food. Check console for details.");
+      console.error(err);
+      alert("❌ Error adding food");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-6">🍽️ Add New Food</h2>
-
+    <div className="min-h-screen flex items-center justify-center p-6 bg-neutral-900">
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 bg-white p-6 rounded-xl shadow-md border"
+        className="w-full max-w-3xl bg-neutral-800/90 backdrop-blur-md rounded-3xl shadow-2xl border border-neutral-700 p-8 space-y-6 text-neutral-200"
       >
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Food Name *
-          </label>
+        <h2 className="text-3xl font-extrabold text-red-500 text-center mb-4">
+          🍽️ Add New Food
+        </h2>
+
+        <div className="space-y-4">
           <input
             type="text"
             name="name"
             value={food.name}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-orange-200 outline-none"
-            placeholder="e.g. Chicken Burger"
+            placeholder="Food Name *"
+            className="w-full p-3 rounded-xl bg-neutral-700 border border-neutral-600 focus:ring-2 focus:ring-red-500 outline-none transition text-neutral-100"
             required
           />
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category
-            </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               type="text"
               name="category"
               value={food.category}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-orange-200 outline-none"
-              placeholder="e.g. Fast Food"
+              placeholder="Category"
+              className="w-full p-3 rounded-xl bg-neutral-700 border border-neutral-600 focus:ring-2 focus:ring-red-500 outline-none transition text-neutral-100"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price ($) *
-            </label>
             <input
               type="number"
               name="price"
               value={food.price}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-orange-200 outline-none"
-              placeholder="e.g. 12.99"
+              placeholder="Price ($) *"
+              className="w-full p-3 rounded-xl bg-neutral-700 border border-neutral-600 focus:ring-2 focus:ring-red-500 outline-none transition text-neutral-100"
               required
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Image URL *
-          </label>
           <input
             type="text"
             name="image"
             value={food.image}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-orange-200 outline-none"
-            placeholder="Paste image link"
+            placeholder="Image URL *"
+            className="w-full p-3 rounded-xl bg-neutral-700 border border-neutral-600 focus:ring-2 focus:ring-red-500 outline-none transition text-neutral-100"
             required
           />
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
           <textarea
             name="description"
             value={food.description}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg p-2 h-24 focus:ring focus:ring-orange-200 outline-none"
-            placeholder="Write a short description..."
-          ></textarea>
+            placeholder="Description"
+            className="w-full p-3 rounded-xl h-28 bg-neutral-700 border border-neutral-600 focus:ring-2 focus:ring-red-500 outline-none transition text-neutral-100"
+          />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="bg-orange-600 text-white font-medium px-6 py-2 rounded-lg hover:bg-orange-700 transition w-full"
+          className="w-full py-3 bg-red-500 rounded-2xl font-semibold text-white hover:bg-red-600 transition transform hover:scale-105 shadow-lg"
         >
           {loading ? "Adding..." : "Add Food"}
         </button>

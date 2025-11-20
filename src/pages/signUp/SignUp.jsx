@@ -1,13 +1,14 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProviders";
+import { Link } from "react-router-dom";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const SignUp = () => {
   const { createUser } = useContext(AuthContext);
-
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,7 +17,6 @@ const SignUp = () => {
     setError("");
     setIsLoading(true);
 
-    // Input validation (optional)
     if (!email || !password) {
       setError("Please enter email and password.");
       setIsLoading(false);
@@ -25,107 +25,91 @@ const SignUp = () => {
 
     createUser(email, password)
       .then((result) => {
-        const createdUser = result.user;
-        console.log(" User created:", createdUser);
+        console.log("User created:", result.user);
         setIsLoading(false);
       })
       .catch((error) => {
-        console.error(" Error creating user:", error.message);
+        console.error("Error creating user:", error.message);
         setError(error.message);
         setIsLoading(false);
       });
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
-          <p className="text-gray-500 mt-1">Join us and start your journey today</p>
-        </div>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-tr from-purple-800 via-black to-indigo-700">
+      <div className="w-full max-w-md p-8 bg-neutral-900/80 backdrop-blur-md rounded-3xl shadow-2xl border border-neutral-700 animate-fade-in">
+        <h1 className="text-4xl font-extrabold text-pink-400 mb-2 text-center">Create Account</h1>
+        <p className="text-center text-neutral-300 mb-6">
+          Join us and start your journey today
+        </p>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="name" className="block text-gray-700 mb-1">Full Name</label>
+            <label htmlFor="name" className="block mb-1 text-neutral-200 font-medium">Full Name</label>
             <input
-              id="name"
               type="text"
+              id="name"
               placeholder="Your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
+              className="w-full px-4 py-3 border border-neutral-700 rounded-xl bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
             />
           </div>
 
-          {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-gray-700 mb-1">Email address</label>
+            <label htmlFor="email" className="block mb-1 text-neutral-200 font-medium">Email</label>
             <input
-              id="email"
               type="email"
+              id="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
+              className="w-full px-4 py-3 border border-neutral-700 rounded-xl bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
             />
           </div>
 
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="block text-gray-700 mb-1">Password</label>
+          <div className="relative">
+            <label htmlFor="password" className="block mb-1 text-neutral-200 font-medium">Password</label>
             <input
+              type={showPassword ? "text" : "password"}
               id="password"
-              type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
+              className="w-full px-4 py-3 border border-neutral-700 rounded-xl bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
             />
+            <span
+              className="absolute right-3 top-11 cursor-pointer text-neutral-400 hover:text-pink-400 transition-transform hover:scale-110"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <AiFillEyeInvisible size={22} /> : <AiFillEye size={22} />}
+            </span>
           </div>
 
-          {/* Error message */}
           {error && (
             <div className="p-3 text-red-700 bg-red-100 border border-red-200 rounded-md text-sm">
               {error}
             </div>
           )}
 
-          {/* Submit button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
+            className="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-2xl shadow-lg transition transform hover:scale-105"
           >
-            {isLoading ? "Creating account..." : "Sign up"}
+            {isLoading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
 
-        {/* Divider */}
-        <div className="flex items-center my-6">
-          <hr className="border-gray-300 w-full" />
-          <span className="mx-2 text-gray-400 text-sm">or sign up with</span>
-          <hr className="border-gray-300 w-full" />
-        </div>
-
-        {/* Social buttons */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <button className="py-2 px-4 border rounded-lg hover:bg-gray-100">Google</button>
-          <button className="py-2 px-4 border rounded-lg hover:bg-gray-100">GitHub</button>
-        </div>
-
-        {/* Login link */}
-        <p className="text-center text-gray-500 text-sm">
+        <div className="mt-6 text-center text-neutral-400 text-sm">
           Already have an account?{" "}
-          <a href="#" className="text-blue-500 font-medium hover:underline">
-            Sign in
-          </a>
-        </p>
+          <Link to="/login" className="text-pink-400 font-semibold hover:text-pink-300">
+            Sign In
+          </Link>
+        </div>
       </div>
     </div>
   );

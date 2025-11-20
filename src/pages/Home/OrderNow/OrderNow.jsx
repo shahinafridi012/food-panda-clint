@@ -14,7 +14,6 @@ const OrderNow = () => {
   const [ifUnavailable, setIfUnavailable] = useState("Remove it from my order");
 
   useEffect(() => {
-    // Server route matches /foods/:id
     fetch(`http://localhost:5000/foods/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Food not found");
@@ -22,21 +21,16 @@ const OrderNow = () => {
       })
       .then((data) => setFood(data))
       .catch((err) => {
-        console.error("Error fetching food:", err);
+        console.error(err);
         toast.error("Failed to fetch food!");
       });
   }, [id]);
 
   const handleOrder = async (e) => {
     e.preventDefault();
-
-    if (!user) {
-      toast.error("Please log in to place an order!");
-      return;
-    }
+    if (!user) return toast.error("Please log in to place an order!");
 
     const totalPrice = food.price * quantity;
-
     const orderInfo = {
       foodId: id,
       foodName: food.name,
@@ -61,80 +55,74 @@ const OrderNow = () => {
       });
 
       if (!res.ok) throw new Error("Failed to place order");
-
       const data = await res.json();
 
       if (data.insertedId) {
         toast.success("Order placed successfully!");
         setQuantity(1);
         setSpecialInstructions("");
-        // Redirect to user dashboard after success
         navigate("/dashboard/user");
-      } else {
-        toast.error("Failed to place order!");
-      }
+      } else toast.error("Failed to place order!");
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong while placing the order!");
+      toast.error("Something went wrong!");
     }
   };
 
-  if (!food) return <p className="text-center mt-10">Loading...</p>;
+  if (!food) return <p className="text-center mt-10 text-neutral-400">Loading...</p>;
 
   return (
-    <div className="max-w-lg mx-auto mt-10 bg-white rounded-xl shadow-lg overflow-hidden">
+    <div className="max-w-md mx-auto mt-16 bg-neutral-900/80 backdrop-blur-md rounded-3xl shadow-2xl border border-neutral-800 overflow-hidden">
       <img
-        className="rounded-t-lg w-full h-64 object-cover"
         src={food.image}
         alt={food.name}
+        className="w-full h-52 object-cover rounded-t-3xl hover:scale-105 transition-transform duration-500"
       />
 
-      <div className="p-6 space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-800">{food.name}</h2>
-        <p className="text-lg font-bold text-pink-600">
-          Tk {food.price * quantity}
-        </p>
-        <p className="text-gray-600">{food.description}</p>
+      <div className="p-5 space-y-3">
+        <h2 className="text-2xl font-extrabold text-red-500">{food.name}</h2>
+        <p className="text-xl font-bold text-pink-500">Tk {food.price * quantity}</p>
+        <p className="text-neutral-300 text-sm">{food.description}</p>
 
         <div>
-          <label className="block text-gray-700 font-medium mb-1">
+          <label className="block text-neutral-200 font-medium text-sm mb-1">
             Special Instructions
           </label>
           <textarea
             placeholder="e.g. No mayo"
             value={specialInstructions}
             onChange={(e) => setSpecialInstructions(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2 text-gray-800 focus:ring-2 focus:ring-pink-400"
+            className="w-full border border-neutral-700 rounded-xl px-3 py-2 bg-neutral-800 text-neutral-200 focus:ring-2 focus:ring-red-500 outline-none text-sm transition"
           ></textarea>
         </div>
 
         <div>
-          <label className="block text-gray-700 font-medium mb-1">
+          <label className="block text-neutral-200 font-medium text-sm mb-1">
             If this item is not available
           </label>
           <select
             value={ifUnavailable}
             onChange={(e) => setIfUnavailable(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2 text-gray-800 focus:ring-2 focus:ring-pink-400"
+            className="w-full border border-neutral-700 rounded-xl px-3 py-2 bg-neutral-800 text-neutral-200 focus:ring-2 focus:ring-red-500 outline-none text-sm transition"
           >
             <option>Remove it from my order</option>
             <option>Keep it in my order</option>
           </select>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 mt-2">
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 border border-neutral-700 text-neutral-200 hover:bg-neutral-700 shadow-md transition"
           >
             -
           </button>
-          <span className="font-medium">{quantity}</span>
+          <span className="text-neutral-200 font-semibold text-lg">{quantity}</span>
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-            className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 border border-neutral-700 text-neutral-200 hover:bg-neutral-700 shadow-md transition"
           >
             +
           </button>
@@ -142,7 +130,7 @@ const OrderNow = () => {
 
         <button
           onClick={handleOrder}
-          className="w-full mt-4 bg-cyan-700 hover:bg-black text-white py-3 rounded-lg font-semibold transition"
+          className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-3 rounded-2xl font-semibold shadow-lg transition transform hover:scale-105"
         >
           Add to Cart
         </button>

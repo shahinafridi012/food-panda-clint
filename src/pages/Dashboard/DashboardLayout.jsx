@@ -5,32 +5,65 @@ import { AuthContext } from "../../providers/AuthProviders";
 export default function DashboardLayout() {
   const { user } = useContext(AuthContext);
 
-  // Check if user is admin or super admin
-  const isAdmin = user?.role === "admin" || user?.role === "super admin";
+  // Only admin users get full dashboard access
+  const isAdmin = user?.role === "admin";
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-neutral-900 text-neutral-200">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-5 flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-orange-600">Dashboard</h2>
+      <aside className="w-64 bg-neutral-800/90 backdrop-blur-md border-r border-neutral-700 shadow-lg flex flex-col gap-6 p-6">
+        <h2 className="text-2xl font-extrabold text-red-500 mb-4">Dashboard</h2>
 
-        {isAdmin ? (
-          <>
-            <Link to="/dashboard/admin">Admin Home</Link>
-            <Link to="/dashboard/manage-foods">Manage Foods</Link>
-            <Link to="/dashboard/manage-users">Manage Users</Link>
-            <Link to="/dashboard/add-food">Add Food</Link>
-          </>
-        ) : (
-          <>
-            <Link to="/my-profile">My Orders</Link>
-          </>
-        )}
+        <nav className="flex flex-col gap-3">
+          {isAdmin ? (
+            <>
+              <Link
+                to="/dashboard/admin"
+                className="px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition transform hover:scale-105"
+              >
+                Admin Home
+              </Link>
+              <Link
+                to="/dashboard/manage-foods"
+                className="px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition transform hover:scale-105"
+              >
+                Manage Foods
+              </Link>
+              <Link
+                to="/dashboard/manage-users"
+                className="px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition transform hover:scale-105"
+              >
+                Manage Users
+              </Link>
+              <Link
+                to="/dashboard/add-food"
+                className="px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition transform hover:scale-105"
+              >
+                Add Food
+              </Link>
+              <Link
+                to="/dashboard/add-admin"
+                className="px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition transform hover:scale-105"
+              >
+                Add Admin
+              </Link>
+            </>
+          ) : (
+            <Link
+              to="/my-profile"
+              className="px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition transform hover:scale-105"
+            >
+              My Orders
+            </Link>
+          )}
+        </nav>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-6">
-        <Outlet />
+      {/* Main Content */}
+      <main className="flex-1 p-8 bg-neutral-900/90 backdrop-blur-md">
+        <div className="animate-fade-in">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

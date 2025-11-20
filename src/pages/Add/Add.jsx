@@ -31,23 +31,28 @@ const Add = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-2xl p-8 border border-gray-200 text-center">
-        <h2 className="text-3xl font-bold mb-4 text-orange-600">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-900/90 px-4">
+      <div className="max-w-md w-full bg-neutral-900/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl p-6 md:p-8 text-center transition-all">
+        <h2 className="text-3xl font-extrabold mb-4 text-red-500">
           Confirm Your Order
         </h2>
+
         {imageUrl && (
           <img
             src={imageUrl}
             alt={foodName}
-            className="w-48 h-48 object-cover mx-auto rounded-xl mb-4"
+            className="w-48 h-48 object-cover mx-auto rounded-2xl mb-4 shadow-lg hover:scale-105 transition-transform duration-500"
           />
         )}
-        <h3 className="text-xl font-semibold mb-2">{foodName}</h3>
-        <p className="text-lg font-medium mb-6">Price: ${foodPrice.toFixed(2)}</p>
+
+        <h3 className="text-2xl font-semibold mb-2 text-neutral-200">{foodName}</h3>
+        <p className="text-xl font-bold mb-6 text-pink-500">
+          Price: Tk {foodPrice.toFixed(2)}
+        </p>
+
         <button
           onClick={handleConfirm}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full transition"
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg transition transform hover:scale-105"
         >
           Confirm Order
         </button>
