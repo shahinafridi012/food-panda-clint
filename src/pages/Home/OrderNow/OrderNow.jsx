@@ -12,9 +12,11 @@ const OrderNow = () => {
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [ifUnavailable, setIfUnavailable] = useState("Remove it from my order");
+  const [loading, setLoading] = useState(false);
 
+  // Fetch food details
   useEffect(() => {
-    fetch(`http://localhost:5000/foods/${id}`)
+    fetch(`${import.meta.env.VITE_NEXT_API_URL}/foods/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Food not found");
         return res.json();
@@ -26,15 +28,17 @@ const OrderNow = () => {
       });
   }, [id]);
 
+  // Handle order
   const handleOrder = async (e) => {
     e.preventDefault();
     if (!user) return toast.error("Please log in to place an order!");
 
-    const totalPrice = food.price * quantity;
+    setLoading(true);
+
     const orderInfo = {
       foodId: id,
       foodName: food.name,
-      price: totalPrice,
+      price: food.price * quantity,
       quantity,
       buyerName: user.displayName,
       buyerEmail: user.email,
@@ -42,10 +46,11 @@ const OrderNow = () => {
       ifUnavailable,
       buyingDate: new Date().toISOString(),
       foodOwner: food.addedBy,
+      image: food.image,
     };
 
     try {
-      const res = await fetch("http://localhost:5000/orders", {
+      const res = await fetch(`${import.meta.env.VITE_NEXT_API_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,18 +59,20 @@ const OrderNow = () => {
         body: JSON.stringify(orderInfo),
       });
 
-      if (!res.ok) throw new Error("Failed to place order");
       const data = await res.json();
-
-      if (data.insertedId) {
-        toast.success("Order placed successfully!");
+      if (res.ok && data.insertedId) {
+        toast.success("Order placed successfully!", { autoClose: 2000 });
         setQuantity(1);
         setSpecialInstructions("");
-        navigate("/dashboard/user");
-      } else toast.error("Failed to place order!");
+        setTimeout(() => navigate("/my-profile"), 2200); // delay so user sees toast
+      } else {
+        toast.error("Failed to place order!");
+      }
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,16 +85,14 @@ const OrderNow = () => {
         alt={food.name}
         className="w-full h-52 object-cover rounded-t-3xl hover:scale-105 transition-transform duration-500"
       />
-
       <div className="p-5 space-y-3">
         <h2 className="text-2xl font-extrabold text-red-500">{food.name}</h2>
         <p className="text-xl font-bold text-pink-500">Tk {food.price * quantity}</p>
         <p className="text-neutral-300 text-sm">{food.description}</p>
 
+        {/* Special Instructions */}
         <div>
-          <label className="block text-neutral-200 font-medium text-sm mb-1">
-            Special Instructions
-          </label>
+          <label className="block text-neutral-200 font-medium text-sm mb-1">Special Instructions</label>
           <textarea
             placeholder="e.g. No mayo"
             value={specialInstructions}
@@ -96,10 +101,9 @@ const OrderNow = () => {
           ></textarea>
         </div>
 
+        {/* If unavailable */}
         <div>
-          <label className="block text-neutral-200 font-medium text-sm mb-1">
-            If this item is not available
-          </label>
+          <label className="block text-neutral-200 font-medium text-sm mb-1">If this item is not available</label>
           <select
             value={ifUnavailable}
             onChange={(e) => setIfUnavailable(e.target.value)}
@@ -110,6 +114,7 @@ const OrderNow = () => {
           </select>
         </div>
 
+        {/* Quantity */}
         <div className="flex items-center space-x-3 mt-2">
           <button
             type="button"
@@ -128,11 +133,15 @@ const OrderNow = () => {
           </button>
         </div>
 
+        {/* Add to Cart */}
         <button
           onClick={handleOrder}
-          className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-3 rounded-2xl font-semibold shadow-lg transition transform hover:scale-105"
+          disabled={loading}
+          className={`w-full mt-4 text-white py-3 rounded-2xl font-semibold shadow-lg transition transform hover:scale-105 ${
+            loading ? "bg-neutral-700 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+          }`}
         >
-          Add to Cart
+          {loading ? "Adding..." : "Add to Cart"}
         </button>
       </div>
     </div>

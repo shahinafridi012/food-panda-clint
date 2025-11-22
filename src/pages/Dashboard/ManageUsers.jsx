@@ -6,14 +6,14 @@ export default function ManageFoods() {
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = "http://localhost:5000";
+  
 
   useEffect(() => {
     const fetchFoods = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("access-token");
-        const res = await fetch(`${API_URL}/foods`, {
+        const res = await fetch(`${import.meta.env.VITE_NEXT_API_URL}/foods`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         if (!res.ok) throw new Error(`Server responded with ${res.status}`);
@@ -35,7 +35,7 @@ export default function ManageFoods() {
 
     try {
       const token = localStorage.getItem("access-token");
-      const res = await fetch(`${API_URL}/foods/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_NEXT_API_URL}/foods/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

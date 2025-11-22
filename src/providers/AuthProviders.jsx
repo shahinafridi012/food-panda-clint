@@ -38,7 +38,7 @@ const AuthProviders = ({ children }) => {
       if (currentUser?.email) {
         try {
           // 1️⃣ Request JWT from backend
-          const tokenRes = await fetch(`http://localhost:5000/jwt`, {
+          const tokenRes = await fetch(`${import.meta.env.VITE_NEXT_API_URL}/jwt`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: currentUser.email }),
@@ -50,7 +50,7 @@ const AuthProviders = ({ children }) => {
 
           // 2️⃣ Fetch user role from backend
           const roleRes = await fetch(
-            `http://localhost:5000/users/${encodeURIComponent(
+            `${import.meta.env.VITE_NEXT_API_URL}/users/${encodeURIComponent(
               currentUser.email
             )}`,
             {

@@ -14,9 +14,10 @@ import AdminDashboard from "../pages/Dashboard/AdminDashboard.jsx";
 import ManageFoods from "../pages/Dashboard/ManageFoods.jsx";
 import ManageUsers from "../pages/Dashboard/ManageUsers.jsx";
 import AddFood from "../pages/Dashboard/AddFood.jsx";
-import AddAdmin from "../pages/Dashboard/AddAdmin.jsx"; // ✅ AddAdmin import
+import AddAdmin from "../pages/Dashboard/AddAdmin.jsx";
 import UserDashboard from "../pages/Dashboard/UserDashboard.jsx";
 import NotFound from "../pages/NotFound.jsx";
+import Gallery from "../pages/Home/Gallery/Gallery.jsx";
 
 const router = createBrowserRouter([
   {
@@ -26,12 +27,14 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
+
+      // All foods page
       {
         path: "all-foods",
         element: <AllFoods />,
         loader: async () => {
           try {
-            const res = await fetch(`http://localhost:5000/foods`);
+            const res = await fetch(`${import.meta.env.VITE_NEXT_API_URL}/foods   `);
             if (!res.ok) throw new Error("Failed to fetch foods");
             return res.json();
           } catch (err) {
@@ -39,8 +42,16 @@ const router = createBrowserRouter([
           }
         },
       },
+
+      // Gallery page
       {
-        path: "food/:id",
+        path: "gallery",
+        element: <Gallery />,
+      },
+
+      // OrderNow page (Private)
+      {
+        path: "order-now/:id",
         element: (
           <PrivetRout>
             <OrderNow />
@@ -48,7 +59,7 @@ const router = createBrowserRouter([
         ),
         loader: async ({ params }) => {
           try {
-            const res = await fetch(`http://localhost:5000/foods/${params.id}`);
+            const res = await fetch(`${import.meta.env.VITE_NEXT_API_URL}/foods/${params.id}`);
             if (!res.ok) throw new Error("Food not found");
             return res.json();
           } catch (err) {
@@ -56,6 +67,8 @@ const router = createBrowserRouter([
           }
         },
       },
+
+      // Confirm order page (Private)
       {
         path: "confirm-order/:id",
         element: (
@@ -65,7 +78,7 @@ const router = createBrowserRouter([
         ),
         loader: async ({ params }) => {
           try {
-            const res = await fetch(`http://localhost:5000/foods/${params.id}`);
+            const res = await fetch(`${import.meta.env.VITE_NEXT_API_URL}/foods/${params.id}`);
             if (!res.ok) throw new Error("Food not found");
             return res.json();
           } catch (err) {
@@ -73,6 +86,8 @@ const router = createBrowserRouter([
           }
         },
       },
+
+      // User profile page
       {
         path: "my-profile",
         element: (
@@ -81,6 +96,8 @@ const router = createBrowserRouter([
           </PrivetRout>
         ),
       },
+
+      // Dashboard layout with nested routes
       {
         path: "dashboard",
         element: (
@@ -123,17 +140,20 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "add-admin", // ✅ AddAdmin route
+            path: "add-admin",
             element: (
               <AdminRoute>
                 <AddAdmin />
               </AdminRoute>
             ),
           },
+
           // Normal user dashboard
           { path: "user", element: <UserDashboard /> },
         ],
       },
+
+      // Fallback route
       { path: "*", element: <NotFound /> },
     ],
   },

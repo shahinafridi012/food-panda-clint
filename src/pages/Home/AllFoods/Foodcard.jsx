@@ -12,16 +12,19 @@ function FoodCard({ food }) {
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
     >
-      <div className="group relative w-full max-w-sm 
+      <div
+        className="group relative w-full max-w-sm 
         bg-black/60 backdrop-blur-md 
         border border-neutral-800 
         rounded-2xl shadow-lg 
         transition-all duration-500 overflow-hidden
-        hover:shadow-red-500/20 hover:-translate-y-2">
-
+        hover:shadow-red-500/20 hover:-translate-y-2"
+      >
         {/* Glow Line Top */}
-        <div className="absolute top-0 left-0 w-full h-[2px] 
-          bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-70" />
+        <div
+          className="absolute top-0 left-0 w-full h-[2px] 
+          bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-70"
+        />
 
         {/* Food Image */}
         <div className="relative overflow-hidden">
@@ -34,16 +37,17 @@ function FoodCard({ food }) {
           />
 
           {/* Category Badge */}
-          <span className="absolute top-3 right-3 
+          <span
+            className="absolute top-3 right-3 
             bg-red-600 text-white text-xs font-semibold 
-            px-3 py-1 rounded-full shadow-md">
+            px-3 py-1 rounded-full shadow-md"
+          >
             {category}
           </span>
         </div>
 
         {/* Card Content */}
         <div className="p-6 space-y-3">
-
           {/* Name */}
           <Link to={`/food/${_id}`}>
             <h3 className="text-xl font-semibold text-white group-hover:text-red-500 transition">
@@ -54,20 +58,16 @@ function FoodCard({ food }) {
           {/* Chef / Maker */}
           <p className="text-sm text-neutral-400">
             Made by{" "}
-            <span className="font-medium text-neutral-300">
-              {madeBy}
-            </span>
+            <span className="font-medium text-neutral-300">{madeBy}</span>
           </p>
 
           {/* Price + Button */}
           <div className="flex items-center justify-between mt-5">
-            <span className="text-2xl font-bold text-red-400">
-              Tk {price}
-            </span>
+            <span className="text-2xl font-bold text-red-400">Tk {price}</span>
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                to={`/food/${_id}`}
+                to={`/order-now/${_id}`}
                 className="inline-flex items-center gap-2
                   bg-gradient-to-r from-red-600 to-red-700 
                   text-white px-5 py-2 rounded-xl text-sm font-semibold
